@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual Caser® Digital - Visor por Páginas</title>
+    <title>Manual Caser® Digital</title>
     <style>
         * {
             margin: 0;
@@ -13,402 +13,735 @@
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: #1a1a2e;
             color: #333;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            padding: 30px 0;
-            color: white;
-        }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .content {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .pdf-section {
-            flex: 3;
-        }
-        
-        .info-panel {
-            flex: 1;
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .info-panel h2 {
-            color: #2575fc;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .info-item {
-            margin-bottom: 20px;
-        }
-        
-        .info-item h3 {
-            color: #6a11cb;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-        
-        .pdf-viewer-container {
-            background: white;
-            border-radius: 15px;
+            height: 100vh;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
         }
         
-        .pdf-header {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            padding: 20px;
+        .manual-container {
+            width: 100%;
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            background: #0f3460;
         }
         
-        .pdf-header h2 {
-            font-size: 1.5rem;
+        .manual-viewer {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #16213e;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            position: relative;
+        }
+        
+        .webp-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        
+        /* Estilos para el video superpuesto - REDUCIDO 30% */
+        .video-overlay {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 42%; /* Reducido de 60% a 42% (30% menos) */
+            max-width: 350px; /* Reducido de 500px a 350px */
+            z-index: 10;
+        }
+        
+        /* Video página 2 - centrado */
+        .video-center {
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Video página 18 - parte inferior (subido 2cm) */
+        .video-bottom {
+            bottom: 12%; /* Subido de 8% a 12% (aproximadamente 2cm) */
+        }
+        
+        .video-container {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            background-color: #000;
+        }
+        
+        .video-placeholder {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .video-placeholder:hover {
+            transform: scale(1.02);
+        }
+        
+        .video-thumbnail {
+            width: 100%;
+            display: block;
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; /* Reducido de 70px a 50px */
+            height: 50px; /* Reducido de 70px a 50px */
+            background-color: rgba(255, 0, 0, 0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .play-button:hover {
+            background-color: rgba(255, 0, 0, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .play-button::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent; /* Reducido */
+            border-bottom: 10px solid transparent; /* Reducido */
+            border-left: 16px solid white; /* Reducido */
+            margin-left: 3px; /* Reducido */
+        }
+        
+        .video-embed {
+            display: none;
+            width: 100%;
+            height: 200px; /* Reducido de 280px a 200px */
+        }
+        
+        /* Estilos para el botón de test (subido 3cm) */
+        .test-button-overlay {
+            position: absolute;
+            bottom: 15%; /* Subido de 8% a 15% (aproximadamente 3cm) */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        .test-button {
+            background-color: #cc1d85;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(204, 29, 133, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .test-button:hover {
+            background-color: #b01a74;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(204, 29, 133, 0.6);
+        }
+        
+        .test-button:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Navegación lateral para móviles */
+        .side-nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 20%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            pointer-events: none;
+        }
+        
+        .side-nav.left {
+            left: 0;
+        }
+        
+        .side-nav.right {
+            right: 0;
+        }
+        
+        .side-nav-btn {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.4);
+            transition: all 0.2s ease;
+            pointer-events: all;
+            margin: 10px 0;
+        }
+        
+        .side-nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.6);
+        }
+        
+        .side-nav-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+        
+        /* Controles en esquinas superiores */
+        .corner-controls {
+            position: fixed;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .top-left {
+            top: 15px;
+            left: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .top-right {
+            top: 15px;
+            right: 15px;
+            flex-direction: column;
+            align-items: flex-end;
         }
         
         .page-indicator {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-        
-        .pdf-frame-container {
-            padding: 20px;
-            background: #f8f9fa;
-            text-align: center;
-        }
-        
-        .pdf-iframe {
-            width: 100%;
-            height: 600px;
-            border: none;
+            background: rgba(15, 52, 96, 0.85);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 8px 12px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 10px;
         }
         
-        .pdf-actions {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            background: white;
-            border-top: 1px solid #eee;
-        }
-        
-        .btn {
-            padding: 12px 25px;
+        .control-btn {
+            background: rgba(255,255,255,0.15);
             border: none;
             border-radius: 8px;
-            font-weight: bold;
+            padding: 10px 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
+            transition: all 0.2s ease;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 8px;
+            width: auto;
         }
         
-        .btn-primary {
-            background: #2575fc;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #1a68e3;
+        .control-btn:hover {
+            background: rgba(255,255,255,0.25);
             transform: translateY(-2px);
         }
         
-        .btn-secondary {
-            background: #6a11cb;
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #580da8;
-            transform: translateY(-2px);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #2575fc;
-            color: #2575fc;
-        }
-        
-        .btn-outline:hover {
-            background: #2575fc;
-            color: white;
-        }
-        
-        .btn:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .navigation {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .page-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .page-input {
-            width: 60px;
-            padding: 8px;
+            font-size: 1rem;
             text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            z-index: 5;
         }
         
-        footer {
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .fallback-page {
+            width: 90%;
+            height: 80%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
             text-align: center;
             padding: 20px;
-            color: white;
-            margin-top: 30px;
-            opacity: 0.8;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
         
-        @media (max-width: 900px) {
-            .content {
-                flex-direction: column;
+        .fallback-page h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .fallback-page p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        /* Estilos para desktop */
+        @media (min-width: 769px) {
+            .corner-controls {
+                gap: 12px;
             }
             
-            .pdf-iframe {
-                height: 500px;
+            .top-left, .top-right {
+                top: 20px;
+            }
+            
+            .top-left {
+                left: 20px;
+            }
+            
+            .top-right {
+                right: 20px;
+            }
+            
+            .page-indicator {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+            
+            .control-btn {
+                padding: 12px 15px;
+                font-size: 0.85rem;
             }
         }
         
-        @media (max-width: 600px) {
-            .pdf-iframe {
-                height: 400px;
+        @media (max-width: 768px) {
+            .video-overlay {
+                width: 56%; /* Reducido proporcionalmente */
             }
             
-            .pdf-actions {
-                flex-direction: column;
-                gap: 10px;
+            .video-embed {
+                height: 150px; /* Reducido proporcionalmente */
             }
             
-            .btn {
-                width: 100%;
-                justify-content: center;
+            .play-button {
+                width: 40px; /* Reducido proporcionalmente */
+                height: 40px; /* Reducido proporcionalmente */
+            }
+            
+            .play-button::after {
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-left: 12px solid white;
+            }
+            
+            .test-button {
+                padding: 12px 28px;
+                font-size: 1rem;
+            }
+            
+            /* Ajustes móviles para posiciones */
+            .video-bottom {
+                bottom: 14%; /* Ajuste para móviles */
+            }
+            
+            .test-button-overlay {
+                bottom: 17%; /* Ajuste para móviles */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .side-nav-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+            
+            .corner-controls {
+                gap: 8px;
+            }
+            
+            .top-left, .top-right {
+                top: 10px;
+            }
+            
+            .top-left {
+                left: 10px;
+            }
+            
+            .top-right {
+                right: 10px;
+            }
+            
+            .page-indicator {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .control-btn {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+            
+            .video-overlay {
+                width: 63%; /* Reducido proporcionalmente */
+            }
+            
+            .video-embed {
+                height: 130px; /* Reducido proporcionalmente */
+            }
+            
+            .test-button {
+                padding: 10px 24px;
+                font-size: 0.9rem;
+                border-radius: 20px;
+            }
+            
+            /* Ajustes móviles pequeños para posiciones */
+            .video-bottom {
+                bottom: 16%; /* Ajuste para móviles pequeños */
+            }
+            
+            .test-button-overlay {
+                bottom: 19%; /* Ajuste para móviles pequeños */
+            }
+        }
+        
+        /* Para pantallas muy pequeñas */
+        @media (max-width: 360px) {
+            .side-nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+            
+            .page-indicator {
+                font-size: 0.75rem;
+                padding: 5px 8px;
+            }
+            
+            .control-btn {
+                padding: 6px 8px;
+                font-size: 0.7rem;
+            }
+            
+            .video-embed {
+                height: 110px; /* Reducido proporcionalmente */
+            }
+            
+            .test-button {
+                padding: 8px 20px;
+                font-size: 0.85rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Manual Caser® Digital</h1>
-            <p>Guía completa para el uso de la plataforma digital</p>
-        </header>
-        
-        <div class="content">
-            <section class="pdf-section">
-                <div class="pdf-viewer-container">
-                    <div class="pdf-header">
-                        <h2>📋 Manual del Usuario</h2>
-                        <div class="page-indicator">
-                            Página <span id="current-page">1</span> de <span id="total-pages">72</span>
-                        </div>
-                    </div>
-                    
-                    <div class="pdf-frame-container">
-                        <!-- IFRAME DEL PDF - Se actualizará con JavaScript -->
-                        <iframe 
-                            class="pdf-iframe"
-                            src="https://drive.google.com/file/d/1sVmvxT27V9eo-Ng3T_54cMvbSDk4Mqqe/preview"
-                            id="pdf-iframe">
-                        </iframe>
-                    </div>
-                    
-                    <div class="page-controls">
-                        <button class="btn btn-secondary" id="prev-btn" onclick="changePage(-1)">
-                            ← Anterior
-                        </button>
-                        
-                        <div>
-                            <input type="number" id="page-input" class="page-input" min="1" max="72" value="1">
-                            <span> / 72</span>
-                        </div>
-                        
-                        <button class="btn btn-primary" id="next-btn" onclick="changePage(1)">
-                            Siguiente →
-                        </button>
-                    </div>
-                    
-                    <div class="pdf-actions">
-                        <button class="btn btn-outline" onclick="downloadPDF()">
-                            📥 Descargar PDF
-                        </button>
-                        
-                        <button class="btn btn-outline" onclick="openInNewTab()">
-                            🔗 Abrir en nueva pestaña
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="btn btn-outline" onclick="goToPage('index.html')">
-                        🏠 Inicio
-                    </button>
-                    <button class="btn btn-primary" onclick="goToPage('test.html')">
-                        ✏️ Realizar Test
-                    </button>
-                </div>
-            </section>
-            
-            <aside class="info-panel">
-                <h2>Navegación por Páginas</h2>
-                
-                <div class="info-item">
-                    <h3>📄 Cómo navegar</h3>
-                    <p>Usa los botones <strong>Anterior</strong> y <strong>Siguiente</strong> para moverte página por página a través del manual.</p>
-                </div>
-                
-                <div class="info-item">
-                    <h3>🔢 Ir a página específica</h3>
-                    <p>Escribe el número de página en el campo de texto y presiona Enter para saltar directamente a esa página.</p>
-                </div>
-                
-                <div class="info-item">
-                    <h3>📖 Contenido del manual</h3>
-                    <ul style="margin-left: 20px; margin-top: 8px;">
-                        <li>Páginas 1-10: Introducción</li>
-                        <li>Páginas 11-25: Configuración</li>
-                        <li>Páginas 26-45: Funcionalidades</li>
-                        <li>Páginas 46-60: Gestión de usuarios</li>
-                        <li>Páginas 61-72: Resolución de problemas</li>
-                    </ul>
-                </div>
-                
-                <div class="info-item">
-                    <h3>💡 Consejos</h3>
-                    <p>Para una mejor experiencia, mantén el manual abierto en una pestaña separada mientras realizas el test.</p>
-                </div>
-            </aside>
+    <div class="manual-container">
+        <!-- Controles en esquina superior izquierda -->
+        <div class="corner-controls top-left">
+            <div class="page-indicator">
+                Página <span id="current-page">1</span> de <span id="total-pages">20</span>
+            </div>
+            <button class="control-btn" onclick="goToPage(0)">
+                🏠 Inicio
+            </button>
         </div>
         
-        <footer>
-            <p>Manual Caser® Digital &copy; 2023 - Todos los derechos reservados</p>
-        </footer>
+        <!-- Controles en esquina superior derecha -->
+        <div class="corner-controls top-right">
+            <button class="control-btn" onclick="downloadManual()">
+                📥 Descargar
+            </button>
+        </div>
+        
+        <main class="manual-viewer" id="manual-viewer">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Cargando manual...</p>
+            </div>
+            
+            <div class="page-container" id="page-container">
+                <!-- Las páginas se cargarán aquí -->
+                
+                <!-- Navegación lateral izquierda - SOLO BOTÓN ATRÁS -->
+                <div class="side-nav left">
+                    <button class="side-nav-btn" id="side-prev-btn" onclick="changePage(-1)">
+                        ←
+                    </button>
+                </div>
+                
+                <!-- Navegación lateral derecha - SOLO BOTÓN ADELANTE -->
+                <div class="side-nav right">
+                    <button class="side-nav-btn" id="side-next-btn" onclick="changePage(1)">
+                        →
+                    </button>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
-        // Variables para controlar la página actual
-        let currentPage = 1;
-        const totalPages = 72;
+        // Rutas CORREGIDAS - apuntando a images/manual/
+        const manualPages = [
+            'images/manual/pagina-01.webp',
+            // La página 2 será el video superpuesto
+            'images/manual/pagina-02.webp',
+            'images/manual/pagina-03.webp',
+            'images/manual/pagina-04.webp',
+            'images/manual/pagina-05.webp',
+            'images/manual/pagina-06.webp',
+            'images/manual/pagina-07.webp',
+            'images/manual/pagina-08.webp',
+            'images/manual/pagina-09.webp',
+            'images/manual/pagina-10.webp',
+            'images/manual/pagina-11.webp',
+            // La página 12 tendrá el botón de test
+            'images/manual/pagina-12.webp',
+            'images/manual/pagina-13.webp',
+            'images/manual/pagina-14.webp',
+            'images/manual/pagina-15.webp',
+            'images/manual/pagina-16.webp',
+            'images/manual/pagina-17.webp',
+            // La página 18 tendrá el segundo video
+            'images/manual/pagina-18.webp',
+            'images/manual/pagina-19.webp',
+            'images/manual/pagina-20.webp',
+        ];
         
-        // Elementos del DOM
-        const pdfIframe = document.getElementById('pdf-iframe');
+        // Estado
+        let currentPage = 0;
+        
+        // Elementos DOM
+        const manualViewer = document.getElementById('manual-viewer');
+        const pageContainer = document.getElementById('page-container');
+        const loadingElement = document.getElementById('loading');
         const currentPageElement = document.getElementById('current-page');
-        const pageInput = document.getElementById('page-input');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
+        const totalPagesElement = document.getElementById('total-pages');
+        const sidePrevBtn = document.getElementById('side-prev-btn');
+        const sideNextBtn = document.getElementById('side-next-btn');
         
-        // Inicializar controles
+        // Inicializar
         document.addEventListener('DOMContentLoaded', function() {
-            updateControls();
+            initManual();
         });
         
-        // Función para cambiar de página
-        function changePage(direction) {
-            const newPage = currentPage + direction;
+        function initManual() {
+            totalPagesElement.textContent = manualPages.length;
             
-            if (newPage >= 1 && newPage <= totalPages) {
-                currentPage = newPage;
-                updatePDFViewer();
+            // Cargar primera página
+            loadPage(currentPage);
+            
+            // Event listeners
+            document.addEventListener('keydown', handleKeyNavigation);
+            
+            // Ocultar loading después de un tiempo
+            setTimeout(() => {
+                loadingElement.style.display = 'none';
+            }, 1000);
+        }
+        
+        function loadPage(pageIndex) {
+            if (pageIndex >= 0 && pageIndex < manualPages.length) {
+                // Mostrar loading
+                loadingElement.style.display = 'block';
+                
+                // Limpiar contenedor
+                const existingImage = pageContainer.querySelector('.webp-image');
+                if (existingImage) {
+                    existingImage.remove();
+                }
+                
+                const existingVideo = pageContainer.querySelector('.video-overlay');
+                if (existingVideo) {
+                    existingVideo.remove();
+                }
+                
+                const existingTestButton = pageContainer.querySelector('.test-button-overlay');
+                if (existingTestButton) {
+                    existingTestButton.remove();
+                }
+                
+                const existingFallback = pageContainer.querySelector('.fallback-page');
+                if (existingFallback) {
+                    existingFallback.remove();
+                }
+                
+                // Crear imagen para la página
+                const img = document.createElement('img');
+                img.className = 'webp-image';
+                img.alt = `Página ${pageIndex + 1}`;
+                
+                img.onload = function() {
+                    loadingElement.style.display = 'none';
+                    
+                    // Si es la página 2, agregar el video superpuesto centrado
+                    if (pageIndex === 1) { // Página 2
+                        createVideoOverlay('CDQdwK08pvM', 'video-center');
+                    }
+                    
+                    // Si es la página 12, agregar el botón de test
+                    if (pageIndex === 11) { // Página 12
+                        createTestButton();
+                    }
+                    
+                    // Si es la página 18, agregar el segundo video en la parte inferior
+                    if (pageIndex === 17) { // Página 18
+                        createVideoOverlay('M3M18slV-vI', 'video-bottom');
+                    }
+                };
+                
+                img.onerror = function() {
+                    createFallbackPage(pageIndex);
+                    loadingElement.style.display = 'none';
+                };
+                
+                // Cargar la imagen WebP
+                img.src = manualPages[pageIndex];
+                pageContainer.appendChild(img);
+                
+                currentPage = pageIndex;
                 updateControls();
             }
         }
         
-        // Función para actualizar el visor del PDF
-        function updatePDFViewer() {
-            pdfIframe.src = `MANUAL DEL CASER@ DIGITAL REDUCIDO (1).docx.pdf#page=${currentPage}`;
-            currentPageElement.textContent = currentPage;
-            pageInput.value = currentPage;
-        }
-        
-        // Función para actualizar los controles
-        function updateControls() {
-            // Actualizar estado de los botones
-            prevBtn.disabled = currentPage <= 1;
-            nextBtn.disabled = currentPage >= totalPages;
+        function createVideoOverlay(videoId, positionClass) {
+            const videoDiv = document.createElement('div');
+            videoDiv.className = `video-overlay ${positionClass}`;
+            videoDiv.innerHTML = `
+                <div class="video-container">
+                    <div class="video-placeholder" id="videoPlaceholder-${videoId}">
+                        <img src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" alt="Video tutorial" class="video-thumbnail">
+                        <div class="play-button"></div>
+                    </div>
+                    <iframe class="video-embed" id="videoEmbed-${videoId}" src="about:blank" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            `;
+            pageContainer.appendChild(videoDiv);
             
-            // Actualizar campo de entrada
-            pageInput.value = currentPage;
-        }
-        
-        // Función para ir a una página específica
-        pageInput.addEventListener('change', function() {
-            let pageNum = parseInt(pageInput.value);
+            // Configurar el evento para el video
+            const videoPlaceholder = document.getElementById(`videoPlaceholder-${videoId}`);
+            const videoEmbed = document.getElementById(`videoEmbed-${videoId}`);
             
-            if (isNaN(pageNum) || pageNum < 1) {
-                pageNum = 1;
-            } else if (pageNum > totalPages) {
-                pageNum = totalPages;
+            if (videoPlaceholder && videoEmbed) {
+                videoPlaceholder.addEventListener('click', function() {
+                    // Cambiar el src del iframe para cargar el video
+                    videoEmbed.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                    
+                    // Ocultar el placeholder y mostrar el iframe
+                    videoPlaceholder.style.display = 'none';
+                    videoEmbed.style.display = 'block';
+                });
             }
+        }
+        
+        function createTestButton() {
+            const testButtonDiv = document.createElement('div');
+            testButtonDiv.className = 'test-button-overlay';
+            testButtonDiv.innerHTML = `
+                <button class="test-button" onclick="startTest()">
+                    Iniciar Test
+                </button>
+            `;
+            pageContainer.appendChild(testButtonDiv);
+        }
+        
+        function startTest() {
+            // Aquí puedes redirigir a la página del test
+            alert('🚀 Iniciando Test...\n\nEn una implementación completa, esto redirigiría a la página del test.');
+            // window.location.href = 'test.html'; // Descomenta esta línea cuando tengas la página del test
+        }
+        
+        function createFallbackPage(pageIndex) {
+            const fallbackDiv = document.createElement('div');
+            fallbackDiv.className = 'fallback-page';
+            fallbackDiv.innerHTML = `
+                <h2>Página ${pageIndex + 1}</h2>
+                <p>Manual del Caser@ Digital</p>
+            `;
+            pageContainer.appendChild(fallbackDiv);
+        }
+        
+        function changePage(direction) {
+            const newPage = currentPage + direction;
+            if (newPage >= 0 && newPage < manualPages.length) {
+                loadPage(newPage);
+            }
+        }
+        
+        function updateControls() {
+            currentPageElement.textContent = currentPage + 1;
             
-            currentPage = pageNum;
-            updatePDFViewer();
-            updateControls();
-        });
-        
-        // Función para descargar el PDF
-        function downloadPDF() {
-            const link = document.createElement('a');
-            link.href = 'MANUAL DEL CASER@ DIGITAL REDUCIDO (1).docx.pdf';
-            link.download = 'Manual_Caser_Digital.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Actualizar botones laterales
+            if (sidePrevBtn) sidePrevBtn.disabled = currentPage <= 0;
+            if (sideNextBtn) sideNextBtn.disabled = currentPage >= manualPages.length - 1;
         }
         
-        // Función para abrir en nueva pestaña
-        function openInNewTab() {
-            window.open('MANUAL DEL CASER@ DIGITAL REDUCIDO (1).docx.pdf', '_blank');
+        function handleKeyNavigation(event) {
+            if (event.key === 'ArrowLeft') {
+                changePage(-1);
+            } else if (event.key === 'ArrowRight') {
+                changePage(1);
+            } else if (event.key === 'Home') {
+                goToPage(0);
+            }
         }
         
-        // Función para navegar a otras páginas (simulada)
-        function goToPage(url) {
-            alert(`En una implementación real, navegaría a: ${url}`);
-            // window.location.href = url;
+        function goToPage(pageIndex) {
+            loadPage(pageIndex);
+        }
+        
+        function downloadManual() {
+            alert('📥 Descargando manual...\n\nEn una implementación completa, se descargaría un archivo PDF o ZIP.');
         }
     </script>
 </body>
